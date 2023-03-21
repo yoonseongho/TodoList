@@ -77,12 +77,9 @@ public class TodoList extends JFrame implements ActionListener {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 400);
+        setResizable(false);
         setLocationRelativeTo(null);
         setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        new TodoList();
     }
 
     @Override
@@ -153,5 +150,9 @@ public class TodoList extends JFrame implements ActionListener {
         for (String task : tasks) {
             taskList.append(task + "\n");
         }
+    }
+
+    public static void main(String[] args) {
+        new TodoList();
     }
 }
