@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -135,7 +134,7 @@ public class TodoList extends JFrame {
         public void actionPerformed(ActionEvent e) {
             String searchText = searchTextField.getText().trim();
             DefaultListModel<String> resultListModel = new DefaultListModel<String>();
-            if (searchText != null && taskListModel != null) {
+            if (!searchText.isEmpty() && taskListModel != null) {
                 for (int i = 0; i < taskListModel.getSize(); i++) {
                     String item = taskListModel.getElementAt(i);
                     if (item.contains(searchText)) {
@@ -143,7 +142,7 @@ public class TodoList extends JFrame {
                     }
                 }
             }
-            taskList.setModel(resultListModel);
+            taskList.setModel(resultListModel); // 작업 목록 대신 검색 결과 모델을 사용
         }
     }
 
