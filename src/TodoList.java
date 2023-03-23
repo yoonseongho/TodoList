@@ -1,154 +1,168 @@
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
+import java.awt.event.*;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 
-public class TodoList extends JFrame implements ActionListener {
-
-    private JTextField taskInput;
-    private JTextArea taskList;
-    private JButton addButton;
-    private JButton deleteButton;
-    private JButton updateButton;
-    private JButton saveButton;
-    private List<String> tasks;
+public class TodoList extends JFrame {
+    private JTextField taskTextField;
+    private JTextField searchTextField;
+    private DefaultListModel<String> taskListModel;
+    private JList<String> taskList;
+    private ArrayList<String> tasks;
 
     public TodoList() {
-        super("Todo List");
+        super("ToDoList");
 
-        tasks = new ArrayList<>();
+        // Initialize tasks ArrayList and taskListModel
+        tasks = new ArrayList<String>();
+        taskListModel = new DefaultListModel<String>();
+        for (String task : tasks) {
+            taskListModel.addElement(task);
+        }
 
-        // Main Panel
+        // Create main panel
         JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        getContentPane().add(mainPanel);
 
-        // Task Input Panel
-        JPanel taskInputPanel = new JPanel(new BorderLayout());
-        taskInputPanel.setBorder(new EmptyBorder(0, 0, 10, 0));
+        // Create input panel
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.X_AXIS));
+        mainPanel.add(inputPanel);
 
         JLabel taskLabel = new JLabel("Task:");
-        taskInput = new JTextField(20);
-        addButton = new JButton("Add");
-        addButton.addActionListener(this);
-        taskInputPanel.add(taskLabel, BorderLayout.WEST);
-        taskInputPanel.add(taskInput, BorderLayout.CENTER);
-        taskInputPanel.add(addButton, BorderLayout.EAST);
+        inputPanel.add(taskLabel);
 
-        // Task List Panel
-        JPanel taskListPanel = new JPanel(new BorderLayout());
-        taskListPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
+        taskTextField = new JTextField(20);
+        inputPanel.add(taskTextField);
 
-        JLabel taskListLabel = new JLabel("Tasks:");
-        taskList = new JTextArea();
-        taskList.setEditable(false);
+        JButton addButton = new JButton("Add");
+        addButton.addActionListener(new AddButtonListener());
+        inputPanel.add(addButton);
+
+        // Create list panel
+        JPanel listPanel = new JPanel();
+        listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
+        mainPanel.add(listPanel);
+
+        JLabel listLabel = new JLabel("Tasks:");
+        listPanel.add(listLabel);
+
+        taskList = new JList<String>(taskListModel);
         JScrollPane scrollPane = new JScrollPane(taskList);
-        scrollPane.setPreferredSize(new Dimension(0, 200));
-        taskListPanel.add(taskListLabel, BorderLayout.NORTH);
-        taskListPanel.add(scrollPane, BorderLayout.CENTER);
+        listPanel.add(scrollPane);
 
-        // Button Panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        deleteButton = new JButton("Delete");
-        deleteButton.addActionListener(this);
-        updateButton = new JButton("Update");
-        updateButton.addActionListener(this);
-        saveButton = new JButton("Save");
-        saveButton.addActionListener(this);
+        // Create button panel
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+        mainPanel.add(buttonPanel);
+
+        JButton editButton = new JButton("Edit");
+        editButton.addActionListener(new EditButtonListener());
+        buttonPanel.add(editButton);
+
+        JButton deleteButton = new JButton("Delete");
+        deleteButton.addActionListener(new DeleteButtonListener());
         buttonPanel.add(deleteButton);
-        buttonPanel.add(updateButton);
-        buttonPanel.add(saveButton);
 
-        // Add Panels to Main Panel
-        mainPanel.add(taskInputPanel, BorderLayout.NORTH);
-        mainPanel.add(taskListPanel, BorderLayout.CENTER);
-        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+        // Create search panel
+        JPanel searchPanel = new JPanel();
+        searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.X_AXIS));
+        mainPanel.add(searchPanel);
 
-        // Add Main Panel to Frame
-        add(mainPanel);
+        JLabel searchLabel = new JLabel("Search:");
+        searchPanel.add(searchLabel);
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 400);
-        setResizable(false);
-        setLocationRelativeTo(null);
+        JTextField searchTextField = new JTextField(20);
+        searchPanel.add(searchTextField);
+
+        JButton searchButton = new JButton("Search");
+        searchButton.addActionListener(new SearchButtonListener());
+        searchPanel.add(searchButton);
+
+        // Create save panel
+        JPanel savePanel = new JPanel();
+        savePanel.setLayout(new BoxLayout(savePanel, BoxLayout.X_AXIS));
+        mainPanel.add(savePanel);
+
+        JButton saveButton = new JButton("Save");
+        saveButton.addActionListener(new SaveButtonListener());
+        savePanel.add(saveButton);
+
+        pack();
         setVisible(true);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == addButton) {
-            addTask();
-        } else if (e.getSource() == deleteButton) {
-            deleteTask();
-        } else if (e.getSource() == updateButton) {
-            updateTask();
-        } else if (e.getSource() == saveButton) {
-            saveTasks();
-        }
-    }
-
-    private void addTask() {
-        String task = taskInput.getText();
-        if (task != null && !task.trim().isEmpty()) {
-            tasks.add(task);
-            updateTaskList();
-            taskInput.setText("");
-        }
-    }
-    private void deleteTask() {
-        int start = taskList.getSelectionStart();
-        int end = taskList.getSelectionEnd();
-        int index = taskList.getText().substring(0, end).split("\n").length - 1;
-
-        if (index != -1) {
-            tasks.remove(index);
-            updateTaskList();
-        }
-    }
-
-    private void updateTask() {
-        int start = taskList.getSelectionStart();
-        int end = taskList.getSelectionEnd();
-        int index = taskList.getText().substring(0, end).split("\n").length - 1;
-
-        if (index != -1) {
-            String newTask = JOptionPane.showInputDialog(this, "Enter new task:", tasks.get(index));
-            if (newTask != null && !newTask.trim().isEmpty()) {
-                tasks.set(index, newTask);
-                updateTaskList();
+    private class AddButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            String task = taskTextField.getText().trim();
+            if (!task.isEmpty()) {
+                tasks.add(task);
+                taskListModel.addElement(task);
+                taskTextField.setText("");
             }
         }
     }
 
-    private void saveTasks() {
-        JFileChooser fileChooser = new JFileChooser();
-        int result = fileChooser.showSaveDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileChooser.getSelectedFile()))) {
-                for (String task : tasks) {
-                    LocalDateTime now = LocalDateTime.now();
-                    String date = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                    writer.write(String.format("%s\n%s\n", date, task));
+    private class EditButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            int index = taskList.getSelectedIndex();
+            if (index != -1) {
+                String task = taskListModel.getElementAt(index);
+                String newTask = JOptionPane.showInputDialog("Edit task:", task);
+                if (!newTask.isEmpty()) {
+                    tasks.set(index, newTask);
+                    taskListModel.setElementAt(newTask, index);
                 }
-                JOptionPane.showMessageDialog(this, "Tasks saved successfully!");
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }
 
-    private void updateTaskList() {
-        taskList.setText("");
-        for (String task : tasks) {
-            taskList.append(task + "\n");
+    private class DeleteButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            int index = taskList.getSelectedIndex();
+            if (index != -1) {
+                tasks.remove(index);
+                taskListModel.remove(index);
+            }
+        }
+    }
+
+    private class SearchButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            String searchText = searchTextField.getText().trim();
+            DefaultListModel<String> resultListModel = new DefaultListModel<String>();
+            if (searchText != null && taskListModel != null) {
+                for (int i = 0; i < taskListModel.getSize(); i++) {
+                    String item = taskListModel.getElementAt(i);
+                    if (item.contains(searchText)) {
+                        resultListModel.addElement(item);
+                    }
+                }
+            }
+            taskList.setModel(resultListModel);
+        }
+    }
+
+    private class SaveButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fileChooser = new JFileChooser();
+            int result = fileChooser.showSaveDialog(TodoList.this);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                String fileName = fileChooser.getSelectedFile().getAbsolutePath();
+                try {
+                    FileWriter writer = new FileWriter(fileName);
+                    for (String task : tasks) {
+                        writer.write(task + "\n");
+                    }
+                    writer.close();
+                    JOptionPane.showMessageDialog(TodoList.this, "Tasks saved successfully!");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(TodoList.this, "Error saving tasks: " + ex.getMessage());
+                }
+            }
         }
     }
 
