@@ -74,8 +74,8 @@ public class TodoList extends JFrame {
         JLabel searchLabel = new JLabel("Search:");
         searchPanel.add(searchLabel);
 
-        // search panel
-        JTextField searchTextField = new JTextField(20);
+        // Fix variable name to avoid conflict with instance variable
+        searchTextField = new JTextField(20);
         searchPanel.add(searchTextField);
 
         JButton searchButton = new JButton("Search");
@@ -142,7 +142,16 @@ public class TodoList extends JFrame {
                     }
                 }
             }
-            taskList.setModel(resultListModel); // 작업 목록 대신 검색 결과 모델을 사용
+            if (resultListModel.getSize() > 0) {  // 검색 결과가 있는 경우에만 새로운 GUI를 생성하여 표시
+                JList<String> resultList = new JList<String>(resultListModel);
+                JScrollPane scrollPane = new JScrollPane(resultList);
+                JFrame searchResultFrame = new JFrame("Search Result");
+                searchResultFrame.getContentPane().add(scrollPane);
+                searchResultFrame.pack();
+                searchResultFrame.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(TodoList.this, "No matching tasks found!");
+            }
         }
     }
 
