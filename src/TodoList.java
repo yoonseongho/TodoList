@@ -7,10 +7,10 @@ import java.util.ArrayList;
 
 public class TodoList extends JFrame {
     private JTextField taskTextField;
-    private JTextField searchTextField;
     private DefaultListModel<String> taskListModel;
     private JList<String> taskList;
     private ArrayList<String> tasks;
+    private JTextField searchTextField;
 
     public TodoList() {
         super("ToDoList");
@@ -75,6 +75,7 @@ public class TodoList extends JFrame {
         JLabel searchLabel = new JLabel("Search:");
         searchPanel.add(searchLabel);
 
+        // search panel
         JTextField searchTextField = new JTextField(20);
         searchPanel.add(searchTextField);
 
