@@ -95,6 +95,7 @@ public class TodoList extends JFrame {
         setVisible(true);
     }
 
+    // 추가하는 버튼 이벤트 처리
     private class AddButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             String task = taskTextField.getText().trim();
@@ -106,6 +107,7 @@ public class TodoList extends JFrame {
         }
     }
 
+    // 수정하는 버튼 이벤트 처리
     private class EditButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             int index = taskList.getSelectedIndex();
@@ -120,6 +122,7 @@ public class TodoList extends JFrame {
         }
     }
 
+    // 삭제하는 버튼 이벤트 처리
     private class DeleteButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             int index = taskList.getSelectedIndex();
@@ -130,6 +133,7 @@ public class TodoList extends JFrame {
         }
     }
 
+    // 검색하는 버튼 이벤트 처리
     private class SearchButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             String searchText = searchTextField.getText().trim();
@@ -155,6 +159,7 @@ public class TodoList extends JFrame {
         }
     }
 
+    // 저장하는 버튼 이벤트 처리
     private class SaveButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             JFileChooser fileChooser = new JFileChooser();
