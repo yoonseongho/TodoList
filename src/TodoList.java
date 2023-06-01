@@ -14,19 +14,16 @@ public class TodoList extends JFrame {
     public TodoList() {
         super("ToDoList");
 
-        // Initialize tasks ArrayList and taskListModel
         tasks = new ArrayList<String>();
         taskListModel = new DefaultListModel<String>();
         for (String task : tasks) {
             taskListModel.addElement(task);
         }
 
-        // Create main panel
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         getContentPane().add(mainPanel);
 
-        // Create input panel
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.X_AXIS));
         mainPanel.add(inputPanel);
@@ -41,7 +38,6 @@ public class TodoList extends JFrame {
         addButton.addActionListener(new AddButtonListener());
         inputPanel.add(addButton);
 
-        // Create list panel
         JPanel listPanel = new JPanel();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
         mainPanel.add(listPanel);
@@ -53,7 +49,6 @@ public class TodoList extends JFrame {
         JScrollPane scrollPane = new JScrollPane(taskList);
         listPanel.add(scrollPane);
 
-        // Create button panel
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         mainPanel.add(buttonPanel);
@@ -66,7 +61,6 @@ public class TodoList extends JFrame {
         deleteButton.addActionListener(new DeleteButtonListener());
         buttonPanel.add(deleteButton);
 
-        // Create search panel
         JPanel searchPanel = new JPanel();
         searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.X_AXIS));
         mainPanel.add(searchPanel);
@@ -74,7 +68,6 @@ public class TodoList extends JFrame {
         JLabel searchLabel = new JLabel("Search:");
         searchPanel.add(searchLabel);
 
-        // Fix variable name to avoid conflict with instance variable
         searchTextField = new JTextField(20);
         searchPanel.add(searchTextField);
 
@@ -82,7 +75,6 @@ public class TodoList extends JFrame {
         searchButton.addActionListener(new SearchButtonListener());
         searchPanel.add(searchButton);
 
-        // Create save panel
         JPanel savePanel = new JPanel();
         savePanel.setLayout(new BoxLayout(savePanel, BoxLayout.X_AXIS));
         mainPanel.add(savePanel);
