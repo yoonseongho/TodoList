@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -141,6 +142,7 @@ public class TodoList extends JFrame {
             if (resultListModel.getSize() > 0) {  // 검색 결과가 있는 경우에만 새로운 GUI를 생성하여 표시
                 JList<String> resultList = new JList<String>(resultListModel);
                 JScrollPane scrollPane = new JScrollPane(resultList);
+                scrollPane.setPreferredSize(new Dimension(300, 300));
                 JFrame searchResultFrame = new JFrame("Search Result");
                 searchResultFrame.getContentPane().add(scrollPane);
                 searchResultFrame.pack();
